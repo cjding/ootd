@@ -1,0 +1,3 @@
+import {createServer} from 'node:http';import {readFile,stat} from 'node:fs/promises';import {extname,join,normalize} from 'node:path';
+const root=process.cwd(),port=Number(process.env.PORT||4173),types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg'};
+createServer(async(req,res)=>{try{const p=normalize(decodeURI(req.url.split('?')[0]));const file=join(root,p==='/'?'index.html':p);const s=await stat(file);const body=await readFile(s.isDirectory()?join(file,'index.html'):file);res.writeHead(200,{'Content-Type':types[extname(file)]||'application/octet-stream'});res.end(body)}catch{res.writeHead(404);res.end('Not found')}}).listen(port,()=>console.log(`Daily Edit → http://localhost:${port}`));
